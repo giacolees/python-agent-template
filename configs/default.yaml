@@ -1,0 +1,9 @@
+hardware:
+  device: cpu
+  num_workers: 4
+
+example:
+  feature_name: demo
+  enabled: true
+
+data_dir: data/

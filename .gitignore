@@ -1,0 +1,41 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Testing / caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Model weights / artifacts
+*.pt
+*.pth
+*.onnx
+*.ckpt
+*.h5
+
+# Data
+data/*
+!data/.gitkeep
+
+# Editors / OS
+.DS_Store
+.idea/
+.vscode/
+
+# Secrets / environment
+.env
+.env.*
+!.env.example
+
+# Shared agent memory — local derived cache, never committed
+.agent-memory/.cache/
