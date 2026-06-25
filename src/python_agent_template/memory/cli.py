@@ -32,6 +32,7 @@ DEFAULT_MEMORY_DIR = Path(".agent-memory")
 _MEMORIES_FILENAME = "memories.jsonl"
 _INDEX_FILENAME = "INDEX.md"
 _CACHE_DIRNAME = ".cache"
+_LOCAL_DIRNAME = "local"
 
 
 def _paths(memory_dir: Path) -> tuple[Path, Path, Path]:
@@ -52,6 +53,78 @@ def _paths(memory_dir: Path) -> tuple[Path, Path, Path]:
         memory_dir / _INDEX_FILENAME,
         memory_dir / _CACHE_DIRNAME,
     )
+
+
+def _local_dir(memory_dir: Path) -> Path:
+    """Path to the gitignored local store nested under a shared memory dir.
+
+    Parameters
+    ----------
+    memory_dir : Path
+        Root directory for the shared memory store.
+
+    Returns
+    -------
+    Path
+        `memory_dir / "local"`.
+    """
+    return memory_dir / _LOCAL_DIRNAME
+
+
+def _resolve_memory_dir(local: bool, memory_dir: Path = DEFAULT_MEMORY_DIR) -> Path:
+    """Resolve the CLI's target memory directory, honoring `--local`.
+
+    Parameters
+    ----------
+    local : bool
+        Whether `--local` was passed.
+    memory_dir : Path, optional
+        Root directory for the shared memory store, by default `DEFAULT_MEMORY_DIR`.
+
+    Returns
+    -------
+    Path
+        `_local_dir(memory_dir)` if `local`, else `memory_dir` unchanged.
+    """
+    return _local_dir(memory_dir) if local else memory_dir
+
+
+def _search_store(
+    memory_dir: Path,
+    query: str,
+    top_k: int,
+    embedder: EmbeddingBase,
+    embedding_dims: int,
+) -> list[dict[str, Any]]:
+    """Search a single memory store, rebuilding its cache first if stale.
+
+    Parameters
+    ----------
+    memory_dir : Path
+        Root directory for the store to search (shared or local).
+    query : str
+        Free-text search query.
+    top_k : int
+        Maximum number of results to return from this store.
+    embedder : EmbeddingBase
+        Embedder instance to use, shared across stores in one `recall` call.
+    embedding_dims : int
+        Output dimension of `embedder`.
+
+    Returns
+    -------
+    list[dict[str, Any]]
+        mem0 search result dicts from this store only.
+    """
+    memories_path, _, cache_dir = _paths(memory_dir)
+    records = read_memories(memories_path)
+
+    if is_cache_stale(cache_dir, len(records)):
+        memory = rebuild_cache(records, cache_dir, embedder, embedding_dims)
+    else:
+        memory = build_memory_client(cache_dir, embedder, embedding_dims)
+
+    return search_memories(memory, query, top_k=top_k)
 
 
 def remember(
@@ -138,18 +211,22 @@ def recall(
     Returns
     -------
     list[dict[str, Any]]
-        mem0 search result dicts (see `python_agent_template.memory.client.search_memories`).
+        mem0 search result dicts (see `python_agent_template.memory.client.search_memories`),
+        merged across the shared store and the local store (if one exists under
+        `memory_dir / "local"`), sorted by score, and capped at `top_k` overall.
     """
-    memories_path, _, cache_dir = _paths(memory_dir)
-    records = read_memories(memories_path)
     embedder = embedder_factory()
+    results = _search_store(memory_dir, query, top_k, embedder, embedding_dims)
 
-    if is_cache_stale(cache_dir, len(records)):
-        memory = rebuild_cache(records, cache_dir, embedder, embedding_dims)
-    else:
-        memory = build_memory_client(cache_dir, embedder, embedding_dims)
+    local_dir = _local_dir(memory_dir)
+    local_memories_path, _, _ = _paths(local_dir)
+    if local_memories_path.exists():
+        local_results = _search_store(local_dir, query, top_k, embedder, embedding_dims)
+        results = sorted(results + local_results, key=lambda result: result["score"], reverse=True)[
+            :top_k
+        ]
 
-    return search_memories(memory, query, top_k=top_k)
+    return results
 
 
 def rebuild_index(
@@ -198,19 +275,29 @@ def main() -> None:
     remember_parser.add_argument("text")
     remember_parser.add_argument("--commit", required=True)
     remember_parser.add_argument("--author", required=True)
+    remember_parser.add_argument(
+        "--local",
+        action="store_true",
+        help="Write to the gitignored local store instead of the shared, git-tracked one.",
+    )
 
     recall_parser = subparsers.add_parser("recall")
     recall_parser.add_argument("query")
     recall_parser.add_argument("--top-k", type=int, default=DEFAULT_TOP_K)
 
-    subparsers.add_parser("rebuild-index")
+    rebuild_index_parser = subparsers.add_parser("rebuild-index")
+    rebuild_index_parser.add_argument(
+        "--local",
+        action="store_true",
+        help="Rebuild the local store's cache instead of the shared one's.",
+    )
 
     args = parser.parse_args()
 
     if args.command == "remember":
-        remember(args.text, args.commit, args.author)
+        remember(args.text, args.commit, args.author, memory_dir=_resolve_memory_dir(args.local))
     elif args.command == "recall":
         for result in recall(args.query, top_k=args.top_k):
             print(f"- ({result['score']:.2f}) {result['memory']}")
     elif args.command == "rebuild-index":
-        rebuild_index()
+        rebuild_index(memory_dir=_resolve_memory_dir(args.local))
