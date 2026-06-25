@@ -4,6 +4,29 @@ Reusable Python project scaffold with AI-agent tooling baked in: coding
 standards, shared agent memory, and an AI commit advisor — ready to clone
 as a starting point for new projects.
 
+## Using this as a template
+
+To start a new project from this baseline:
+
+```bash
+gh repo create <new-project-name> --template giacolees/python-agent-template --private
+git clone https://github.com/<you>/<new-project-name>
+cd <new-project-name>
+```
+
+Without `gh`, use GitHub's "Use this template" button on the repo page, or
+clone directly and re-point the remote:
+
+```bash
+git clone https://github.com/giacolees/python-agent-template <new-project-name>
+cd <new-project-name>
+git remote set-url origin https://github.com/<you>/<new-project-name>
+```
+
+Either way, follow up with the [Setup](#setup) steps below, then rename
+the `python_agent_template` package under `src/` and `tests/` to match
+your project.
+
 ## Project layout
 
 - `src/` — application source code.
@@ -66,6 +89,18 @@ uv run python -m python_agent_template.memory recall "<query>"
 
 See [.agentrules/COLLABORATION.md](.agentrules/COLLABORATION.md) §9 for
 details, including the `SKIP_AGENT_MEMORY` opt-out.
+
+For a normal, non-shared session (solo exploration, debugging, a scratch
+branch), write live to a gitignored local store instead of waiting for a
+commit:
+
+```bash
+uv run python -m python_agent_template.memory remember "<fact>" --commit pending --author <name> --local
+```
+
+`recall` always searches both the shared and local stores and merges the
+results, so nothing written with `--local` is invisible to later `recall`
+calls in the same checkout.
 
 ## AI commit advisor
 
