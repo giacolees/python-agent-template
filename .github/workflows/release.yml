@@ -23,7 +23,10 @@ jobs:
       - name: Read latest released version
         id: latest
         run: |
-          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          LATEST_TAG=$(git tag --list 'v*' --sort=-v:refname | head -n1)
+          if [ -z "$LATEST_TAG" ]; then
+            LATEST_TAG="v0.0.0"
+          fi
           echo "version=${LATEST_TAG#v}" >> "$GITHUB_OUTPUT"
 
       - name: Check whether the version changed
@@ -69,6 +72,10 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           TAG="v${{ steps.current.outputs.version }}"
-          git tag "$TAG"
-          git push origin "$TAG"
-          gh release create "$TAG" --generate-notes
+          if git rev-parse "$TAG" >/dev/null 2>&1 || git ls-remote --tags origin "$TAG" | grep -q "$TAG"; then
+            echo "Tag $TAG already exists; skipping release creation."
+          else
+            git tag "$TAG"
+            git push origin "$TAG"
+            gh release create "$TAG" --generate-notes
+          fi
