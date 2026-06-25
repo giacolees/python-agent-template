@@ -5,7 +5,13 @@ from pathlib import Path
 from mem0.embeddings.base import EmbeddingBase
 from mem0.embeddings.mock import MockEmbeddings
 
-from python_agent_template.memory.cli import rebuild_index, recall, remember
+from python_agent_template.memory.cli import (
+    DEFAULT_MEMORY_DIR,
+    _resolve_memory_dir,
+    rebuild_index,
+    recall,
+    remember,
+)
 from python_agent_template.memory.records import append_memory, create_memory_record
 
 _MOCK_DIMS = 10
@@ -237,3 +243,13 @@ def test_recall_caps_merged_results_at_top_k(tmp_path: Path) -> None:
     )
 
     assert len(results) == 2
+
+
+def test_resolve_memory_dir_local_flag_selects_local_subdir() -> None:
+    """--local resolves to the gitignored local store nested under the shared dir."""
+    assert _resolve_memory_dir(local=True) == DEFAULT_MEMORY_DIR / "local"
+
+
+def test_resolve_memory_dir_default_selects_shared_dir() -> None:
+    """Without --local, the CLI targets the shared store as before."""
+    assert _resolve_memory_dir(local=False) == DEFAULT_MEMORY_DIR

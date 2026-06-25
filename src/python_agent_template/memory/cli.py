@@ -71,6 +71,24 @@ def _local_dir(memory_dir: Path) -> Path:
     return memory_dir / _LOCAL_DIRNAME
 
 
+def _resolve_memory_dir(local: bool, memory_dir: Path = DEFAULT_MEMORY_DIR) -> Path:
+    """Resolve the CLI's target memory directory, honoring `--local`.
+
+    Parameters
+    ----------
+    local : bool
+        Whether `--local` was passed.
+    memory_dir : Path, optional
+        Root directory for the shared memory store, by default `DEFAULT_MEMORY_DIR`.
+
+    Returns
+    -------
+    Path
+        `_local_dir(memory_dir)` if `local`, else `memory_dir` unchanged.
+    """
+    return _local_dir(memory_dir) if local else memory_dir
+
+
 def _search_store(
     memory_dir: Path,
     query: str,
@@ -257,19 +275,29 @@ def main() -> None:
     remember_parser.add_argument("text")
     remember_parser.add_argument("--commit", required=True)
     remember_parser.add_argument("--author", required=True)
+    remember_parser.add_argument(
+        "--local",
+        action="store_true",
+        help="Write to the gitignored local store instead of the shared, git-tracked one.",
+    )
 
     recall_parser = subparsers.add_parser("recall")
     recall_parser.add_argument("query")
     recall_parser.add_argument("--top-k", type=int, default=DEFAULT_TOP_K)
 
-    subparsers.add_parser("rebuild-index")
+    rebuild_index_parser = subparsers.add_parser("rebuild-index")
+    rebuild_index_parser.add_argument(
+        "--local",
+        action="store_true",
+        help="Rebuild the local store's cache instead of the shared one's.",
+    )
 
     args = parser.parse_args()
 
     if args.command == "remember":
-        remember(args.text, args.commit, args.author)
+        remember(args.text, args.commit, args.author, memory_dir=_resolve_memory_dir(args.local))
     elif args.command == "recall":
         for result in recall(args.query, top_k=args.top_k):
             print(f"- ({result['score']:.2f}) {result['memory']}")
     elif args.command == "rebuild-index":
-        rebuild_index()
+        rebuild_index(memory_dir=_resolve_memory_dir(args.local))
