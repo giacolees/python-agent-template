@@ -39,3 +39,5 @@ data/*
 
 # Shared agent memory — local derived cache, never committed
 .agent-memory/.cache/
+# Solo-session local memory store — gitignored, never shared with teammates
+.agent-memory/local/

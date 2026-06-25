@@ -124,6 +124,16 @@ the code must look like) and [NAMING_CONVENTIONS.md](NAMING_CONVENTIONS.md)
   `uv run python -m python_agent_template.memory recall "<query>"`.
 - Set `SKIP_AGENT_MEMORY=1` to opt a commit out of memory extraction,
   mirroring `SKIP_AI_COMMIT_ADVISOR` for the commit advisor.
+- In a normal, non-shared session (solo exploration, debugging, a scratch
+  branch nobody else is working from), call
+  `uv run python -m python_agent_template.memory remember "<fact>" --commit
+  <short-sha-or-"pending"> --author <name> --local` proactively as durable
+  knowledge surfaces, instead of waiting for the next commit. This writes to
+  `.agent-memory/local/` — a gitignored store that's never shared with
+  teammates. `recall` always searches both the shared and local stores and
+  merges the results, so nothing written with `--local` is invisible to
+  later `recall` calls in the same checkout. The commit hook remains the
+  only path that writes to the shared, git-tracked store.
 
 ## 10. Working with AI agents
 
