@@ -32,6 +32,7 @@ DEFAULT_MEMORY_DIR = Path(".agent-memory")
 _MEMORIES_FILENAME = "memories.jsonl"
 _INDEX_FILENAME = "INDEX.md"
 _CACHE_DIRNAME = ".cache"
+_LOCAL_DIRNAME = "local"
 
 
 def _paths(memory_dir: Path) -> tuple[Path, Path, Path]:
@@ -52,6 +53,60 @@ def _paths(memory_dir: Path) -> tuple[Path, Path, Path]:
         memory_dir / _INDEX_FILENAME,
         memory_dir / _CACHE_DIRNAME,
     )
+
+
+def _local_dir(memory_dir: Path) -> Path:
+    """Path to the gitignored local store nested under a shared memory dir.
+
+    Parameters
+    ----------
+    memory_dir : Path
+        Root directory for the shared memory store.
+
+    Returns
+    -------
+    Path
+        `memory_dir / "local"`.
+    """
+    return memory_dir / _LOCAL_DIRNAME
+
+
+def _search_store(
+    memory_dir: Path,
+    query: str,
+    top_k: int,
+    embedder: EmbeddingBase,
+    embedding_dims: int,
+) -> list[dict[str, Any]]:
+    """Search a single memory store, rebuilding its cache first if stale.
+
+    Parameters
+    ----------
+    memory_dir : Path
+        Root directory for the store to search (shared or local).
+    query : str
+        Free-text search query.
+    top_k : int
+        Maximum number of results to return from this store.
+    embedder : EmbeddingBase
+        Embedder instance to use, shared across stores in one `recall` call.
+    embedding_dims : int
+        Output dimension of `embedder`.
+
+    Returns
+    -------
+    list[dict[str, Any]]
+        mem0 search result dicts from this store only.
+    """
+    memories_path, _, cache_dir = _paths(memory_dir)
+    records = read_memories(memories_path)
+
+    if is_cache_stale(cache_dir, len(records)):
+        memory = rebuild_cache(records, cache_dir, embedder, embedding_dims)
+    else:
+        memory = build_memory_client(cache_dir, embedder, embedding_dims)
+
+    return search_memories(memory, query, top_k=top_k)
 
 
 def remember(
@@ -138,18 +193,22 @@ def recall(
     Returns
     -------
     list[dict[str, Any]]
-        mem0 search result dicts (see `python_agent_template.memory.client.search_memories`).
+        mem0 search result dicts (see `python_agent_template.memory.client.search_memories`),
+        merged across the shared store and the local store (if one exists under
+        `memory_dir / "local"`), sorted by score, and capped at `top_k` overall.
     """
-    memories_path, _, cache_dir = _paths(memory_dir)
-    records = read_memories(memories_path)
     embedder = embedder_factory()
+    results = _search_store(memory_dir, query, top_k, embedder, embedding_dims)
 
-    if is_cache_stale(cache_dir, len(records)):
-        memory = rebuild_cache(records, cache_dir, embedder, embedding_dims)
-    else:
-        memory = build_memory_client(cache_dir, embedder, embedding_dims)
+    local_dir = _local_dir(memory_dir)
+    local_memories_path, _, _ = _paths(local_dir)
+    if local_memories_path.exists():
+        local_results = _search_store(local_dir, query, top_k, embedder, embedding_dims)
+        results = sorted(results + local_results, key=lambda result: result["score"], reverse=True)[
+            :top_k
+        ]
 
-    return search_memories(memory, query, top_k=top_k)
+    return results
 
 
 def rebuild_index(
