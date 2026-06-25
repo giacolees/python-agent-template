@@ -31,8 +31,11 @@ jobs:
 
       - name: Check whether the version changed
         id: check
+        env:
+          CURRENT_VERSION: ${{ steps.current.outputs.version }}
+          LATEST_VERSION: ${{ steps.latest.outputs.version }}
         run: |
-          if [ "${{ steps.current.outputs.version }}" = "${{ steps.latest.outputs.version }}" ]; then
+          if [ "$CURRENT_VERSION" = "$LATEST_VERSION" ]; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             echo "changed=true" >> "$GITHUB_OUTPUT"
@@ -70,8 +73,9 @@ jobs:
         if: steps.check.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
+          CURRENT_VERSION: ${{ steps.current.outputs.version }}
         run: |
-          TAG="v${{ steps.current.outputs.version }}"
+          TAG="v$CURRENT_VERSION"
           if git rev-parse "$TAG" >/dev/null 2>&1 || git ls-remote --tags origin "$TAG" | grep -q "$TAG"; then
             echo "Tag $TAG already exists; skipping release creation."
           else
