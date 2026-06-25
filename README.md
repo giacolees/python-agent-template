@@ -114,3 +114,15 @@ commit — and prints:
 
 It skips silently if the `claude` CLI isn't installed, in CI (`$CI` set), or
 if you set `SKIP_AI_COMMIT_ADVISOR=1` for a given commit.
+
+## Releasing
+
+A workflow (`.github/workflows/release.yml`) watches every push to `main`.
+When the `version` field in `pyproject.toml` changes, it re-runs the full
+lint/type-check/test gate, then tags the commit `v<version>` and publishes
+a GitHub Release with auto-generated notes. Pushes that don't change the
+version are a no-op for this workflow.
+
+To cut a release: bump `version` in `pyproject.toml` in a normal PR.
+Merging that PR to `main` is what ships the release — there's no separate
+manual step.
