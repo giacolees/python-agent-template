@@ -214,7 +214,7 @@ Update the `recall` docstring's `Returns` section to:
         mem0 search result dicts (see `python_agent_template.memory.client.search_memories`),
         merged across the shared store and the local store (if one exists under
         `memory_dir / "local"`), sorted by score, and capped at `top_k` overall.
-    ```
+```
 
 - [ ] **Step 4: Run tests to verify they pass**
 
