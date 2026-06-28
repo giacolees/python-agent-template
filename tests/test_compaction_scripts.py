@@ -65,9 +65,5 @@ def test_registration_files_are_valid_json() -> None:
 
     settings = json.loads((REPO / ".claude" / "settings.json").read_text(encoding="utf-8"))
     precompact = settings["hooks"]["PreCompact"]
-    commands = [
-        hook["command"]
-        for entry in precompact
-        for hook in entry["hooks"]
-    ]
+    commands = [hook["command"] for entry in precompact for hook in entry["hooks"]]
     assert "scripts/hooks/precompact_claude.sh" in commands
