@@ -6,22 +6,34 @@ as a starting point for new projects.
 
 ## Using this as a template
 
-To start a new project from this baseline:
+This repo uses [Copier](https://copier.readthedocs.io) for templating — no `gh`
+cli or manual remote-resetting needed.
+
+**Scaffold a new project** (requires `uv` installed; `uvx` runs copier ephemerally):
 
 ```bash
-gh repo create <new-project-name> --template giacolees/python-agent-template --private
-git clone https://github.com/<you>/<new-project-name>
-cd <new-project-name>
+uvx copier copy gh:giacolees/python-agent-template <new-project-dir>
+cd <new-project-dir>
+uv sync --all-groups
+uv run pre-commit install
 ```
 
-Without `gh`, use GitHub's "Use this template" button on the repo page, or
-clone directly and re-point the remote:
+Copier will prompt for your project name, slug, description, author, and Python
+version, then generate a fully-personalised project from the `template/` directory.
+
+**Keep a downstream repo up to date** when this template ships new changes:
 
 ```bash
-git clone https://github.com/giacolees/python-agent-template <new-project-name>
-cd <new-project-name>
-git remote set-url origin https://github.com/<you>/<new-project-name>
+cd <existing-project-dir>
+uvx copier update
 ```
+
+Copier shows a diff of what changed and lets you resolve any conflicts — just
+like a `git merge`.
+
+> [!NOTE]
+> A `.copier-answers.yml` file is committed to each downstream repo. This is how
+> copier tracks the template version — do **not** gitignore it.
 
 Either way, follow up with the [Setup](#setup) steps below, then add your
 project code under `src/`.

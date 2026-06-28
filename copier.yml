@@ -1,0 +1,36 @@
+# Copier configuration for python-agent-template
+# Scaffold a new project : uvx copier copy gh:giacolees/python-agent-template <new-project-dir>
+# Pull in future updates : uvx copier update   (from inside the downstream repo)
+
+project_name:
+  type: str
+  help: "Human-readable project name (e.g. My Cool Project)"
+
+project_slug:
+  type: str
+  help: "Python package / directory name — no spaces, use underscores (e.g. my_cool_project)"
+  default: "{{ project_name | lower | replace(' ', '_') | replace('-', '_') }}"
+
+description:
+  type: str
+  help: "One-line project description"
+  default: "A Python project based on python-agent-template."
+
+author:
+  type: str
+  help: "Author name or GitHub username"
+
+python_version:
+  type: str
+  help: "Minimum Python version"
+  default: "3.12"
+  choices:
+    - "3.11"
+    - "3.12"
+    - "3.13"
+
+_subdirectory: template
+_exclude:
+  - copier.yml
+  - .git
+  - .copier-answers.yml

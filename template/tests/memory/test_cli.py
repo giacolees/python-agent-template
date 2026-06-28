@@ -28,7 +28,7 @@ def test_remember_appends_record_and_writes_index(tmp_path: Path) -> None:
     remember(
         "Use FAISS for local search",
         commit="abc1234",
-        author="giacolees",
+        author="{{ author }}",
         memory_dir=memory_dir,
         embedder_factory=_mock_embedder,
         embedding_dims=_MOCK_DIMS,
@@ -47,7 +47,7 @@ def test_remember_then_recall_finds_the_memory(tmp_path: Path) -> None:
     remember(
         "Always run migrations before deploying",
         commit="abc1234",
-        author="giacolees",
+        author="{{ author }}",
         memory_dir=memory_dir,
         embedder_factory=_mock_embedder,
         embedding_dims=_MOCK_DIMS,

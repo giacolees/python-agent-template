@@ -1,4 +1,4 @@
-"""Centralized logging configuration for the python-agent-template pipeline."""
+"""Centralized logging configuration for the {{ project_name }} pipeline."""
 
 import logging
 import sys

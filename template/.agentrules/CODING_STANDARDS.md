@@ -1,4 +1,4 @@
-# Agent Coding Standards — python-agent-template
+# Agent Coding Standards — {{ project_name }}
 
 These rules are binding for all code generated or modified in this repository,
 by humans or AI agents. They exist to keep the pipeline auditable, testable,
