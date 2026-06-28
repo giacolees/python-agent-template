@@ -26,8 +26,7 @@ jobs:
       - name: Check formatting with ruff
         run: uv run ruff format --check .
 
-      - name: Type-check with mypy
-        run: uv run mypy memory tests
+      # mypy and pytest are intentionally omitted: all Python source and test
+      # files live inside template/ and contain unresolved Jinja2 expressions.
+      # Downstream repos run the full suite after `copier copy`.
 
-      - name: Run tests
-        run: uv run pytest

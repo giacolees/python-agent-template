@@ -61,13 +61,7 @@ jobs:
         if: steps.check.outputs.changed == 'true'
         run: uv run ruff format --check .
 
-      - name: Type-check with mypy
-        if: steps.check.outputs.changed == 'true'
-        run: uv run mypy memory tests
-
-      - name: Run tests
-        if: steps.check.outputs.changed == 'true'
-        run: uv run pytest
+      # mypy and pytest are intentionally omitted — see ci.yml for rationale.
 
       - name: Tag and create release
         if: steps.check.outputs.changed == 'true'

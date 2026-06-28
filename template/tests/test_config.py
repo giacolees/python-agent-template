@@ -5,9 +5,8 @@ from typing import Any
 
 import pytest
 import yaml
-from pydantic import ValidationError
-
 from memory.config import AppConfig, load_config, read_yaml
+from pydantic import ValidationError
 
 VALID_CONFIG: dict[str, Any] = {
     "hardware": {"device": "a100", "num_workers": 2},
