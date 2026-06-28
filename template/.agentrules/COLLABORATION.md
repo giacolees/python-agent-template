@@ -55,6 +55,8 @@ the code must look like) and [NAMING_CONVENTIONS.md](NAMING_CONVENTIONS.md)
 
 - Every change lands via PR, even small ones — there is no direct-push
   workflow on shared branches.
+- PR descriptions must follow the structure outlined in
+  [PR_TEMPLATE.md](PR_TEMPLATE.md) (Summary and Verification sections).
 - PR description states *why* the change is needed, not just what
   changed (the diff already shows what changed).
 - All CI checks (ruff lint, ruff format, mypy, pytest) must pass before
