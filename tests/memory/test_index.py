@@ -1,9 +1,9 @@
-"""Tests for python_agent_template.memory.index."""
+"""Tests for memory.index."""
 
 from pathlib import Path
 
-from python_agent_template.memory.index import render_index, write_index
-from python_agent_template.memory.records import MemoryRecord
+from memory.index import render_index, write_index
+from memory.records import MemoryRecord
 
 
 def _record(text: str, created_at: str) -> MemoryRecord:

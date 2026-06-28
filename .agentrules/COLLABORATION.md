@@ -78,7 +78,7 @@ the code must look like) and [NAMING_CONVENTIONS.md](NAMING_CONVENTIONS.md)
 
 - New hyperparameters, thresholds, or hardware targets go into
   `configs/*.yaml` and the corresponding Pydantic model in
-  `python_agent_template.config`, not into source as literals.
+  `memory.config`, not into source as literals.
 - Never commit `.env`, credentials, or API keys. Add new required
   environment variables to `.env.example` (placeholder values only).
 - The `detect-secrets` pre-commit hook scans staged diffs against
@@ -121,12 +121,12 @@ the code must look like) and [NAMING_CONVENTIONS.md](NAMING_CONVENTIONS.md)
   so concurrent memory additions on different branches never produce
   binary merge conflicts.
 - Query shared memory directly with
-  `uv run python -m python_agent_template.memory recall "<query>"`.
+  `uv run python -m memory recall "<query>"`.
 - Set `SKIP_AGENT_MEMORY=1` to opt a commit out of memory extraction,
   mirroring `SKIP_AI_COMMIT_ADVISOR` for the commit advisor.
 - In a normal, non-shared session (solo exploration, debugging, a scratch
   branch nobody else is working from), call
-  `uv run python -m python_agent_template.memory remember "<fact>" --commit
+  `uv run python -m memory remember "<fact>" --commit
   <short-sha-or-"pending"> --author <name> --local` proactively as durable
   knowledge surfaces, instead of waiting for the next commit. This writes to
   `.agent-memory/local/` — a gitignored store that's never shared with

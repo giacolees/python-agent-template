@@ -1,18 +1,18 @@
-"""Tests for python_agent_template.memory.cli."""
+"""Tests for memory.cli."""
 
 from pathlib import Path
 
 from mem0.embeddings.base import EmbeddingBase
 from mem0.embeddings.mock import MockEmbeddings
 
-from python_agent_template.memory.cli import (
+from memory.cli import (
     DEFAULT_MEMORY_DIR,
     _resolve_memory_dir,
     rebuild_index,
     recall,
     remember,
 )
-from python_agent_template.memory.records import append_memory, create_memory_record
+from memory.records import append_memory, create_memory_record
 
 _MOCK_DIMS = 10
 

@@ -12,7 +12,7 @@ context any teammate would already have.
 For deeper, query-specific search beyond what's in the index, run:
 
 ```bash
-uv run python -m python_agent_template.memory recall "<query>"
+uv run python -m memory recall "<query>"
 ```
 
 ## Binding rules

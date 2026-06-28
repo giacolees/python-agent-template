@@ -23,14 +23,14 @@ cd <new-project-name>
 git remote set-url origin https://github.com/<you>/<new-project-name>
 ```
 
-Either way, follow up with the [Setup](#setup) steps below, then rename
-the `python_agent_template` package under `src/` and `tests/` to match
-your project.
+Either way, follow up with the [Setup](#setup) steps below, then add your
+project code under `src/`.
 
 ## Project layout
 
-- `src/` — application source code.
-- `tests/` — Pytest suite mirroring `src/`.
+- `src/` — your application source code (empty by default; reserved for project files).
+- `memory/` — reusable agent-memory tooling (CLI + mem0-backed store) shared across projects.
+- `tests/` — Pytest suite.
 - `configs/` — YAML configuration (hyperparameters, thresholds, hardware targets).
 - `deployment/` — Dockerfiles and Kubernetes manifests.
 - `.agentrules/` — coding standards binding for all agent-generated code (see
@@ -51,14 +51,14 @@ uv run pre-commit install
 ```bash
 uv run ruff check .          # lint, including naming conventions (pep8-naming)
 uv run ruff format .         # format
-uv run mypy src tests        # strict static type checking
+uv run mypy memory tests     # strict static type checking
 uv run pytest                # tests + coverage
 ```
 
 ## Configuration
 
 Application settings (hardware target, example feature flags, paths) live in `configs/*.yaml`
-and are loaded via `python_agent_template.config.load_config`, never hardcoded in
+and are loaded via `memory.config.load_config`, never hardcoded in
 source. See `configs/default.yaml` for the schema.
 
 ## Agent rules
@@ -84,7 +84,7 @@ shared knowledge is available at the start of every session. Query it
 directly with:
 
 ```bash
-uv run python -m python_agent_template.memory recall "<query>"
+uv run python -m memory recall "<query>"
 ```
 
 See [.agentrules/COLLABORATION.md](.agentrules/COLLABORATION.md) §9 for
@@ -95,7 +95,7 @@ branch), write live to a gitignored local store instead of waiting for a
 commit:
 
 ```bash
-uv run python -m python_agent_template.memory remember "<fact>" --commit pending --author <name> --local
+uv run python -m memory remember "<fact>" --commit pending --author <name> --local
 ```
 
 `recall` always searches both the shared and local stores and merges the

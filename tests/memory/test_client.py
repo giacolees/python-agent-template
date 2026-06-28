@@ -1,10 +1,10 @@
-"""Tests for python_agent_template.memory.client."""
+"""Tests for memory.client."""
 
 from pathlib import Path
 
 from mem0.embeddings.mock import MockEmbeddings
 
-from python_agent_template.memory.client import (
+from memory.client import (
     add_to_cache,
     build_memory_client,
     is_cache_stale,
@@ -13,7 +13,7 @@ from python_agent_template.memory.client import (
     search_memories,
     write_cache_marker,
 )
-from python_agent_template.memory.records import create_memory_record
+from memory.records import create_memory_record
 
 _MOCK_DIMS = 10
 

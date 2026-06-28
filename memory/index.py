@@ -7,7 +7,7 @@ at a single, always-current file to read at session start.
 
 from pathlib import Path
 
-from python_agent_template.memory.records import MemoryRecord
+from memory.records import MemoryRecord
 
 _INDEX_HEADER = (
     "# Shared Agent Memory\n\nGenerated from `.agent-memory/memories.jsonl` — do not edit by hand."

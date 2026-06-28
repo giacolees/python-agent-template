@@ -3,7 +3,7 @@
 `memories.jsonl` is the committed source of truth for shared agent
 memory: one JSON object per line, append-only, so that concurrent
 additions on different branches merge cleanly as plain text. The local
-FAISS search index (see `python_agent_template.memory.client`) is a derived
+FAISS search index (see `memory.client`) is a derived
 cache rebuilt from this file, never the other way around.
 """
 

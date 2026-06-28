@@ -1,7 +1,7 @@
 """Command-line interface for shared agent memory.
 
 Provides the `remember` / `recall` / `rebuild-index` subcommands run via
-`python -m python_agent_template.memory` — by the pre-commit hook
+`python -m memory` — by the pre-commit hook
 (`scripts/memory_extractor.sh`) for writes, and by agents directly for
 explicit semantic search.
 """
@@ -13,8 +13,7 @@ from typing import Any
 
 from mem0.embeddings.base import EmbeddingBase
 
-from python_agent_template.logging_config import configure_logging
-from python_agent_template.memory.client import (
+from memory.client import (
     DEFAULT_TOP_K,
     EMBEDDING_DIMS,
     add_to_cache,
@@ -25,8 +24,9 @@ from python_agent_template.memory.client import (
     search_memories,
     write_cache_marker,
 )
-from python_agent_template.memory.index import write_index
-from python_agent_template.memory.records import append_memory, create_memory_record, read_memories
+from memory.index import write_index
+from memory.logging_config import configure_logging
+from memory.records import append_memory, create_memory_record, read_memories
 
 DEFAULT_MEMORY_DIR = Path(".agent-memory")
 _MEMORIES_FILENAME = "memories.jsonl"
@@ -211,7 +211,7 @@ def recall(
     Returns
     -------
     list[dict[str, Any]]
-        mem0 search result dicts (see `python_agent_template.memory.client.search_memories`),
+        mem0 search result dicts (see `memory.client.search_memories`),
         merged across the shared store and the local store (if one exists under
         `memory_dir / "local"`), sorted by score, and capped at `top_k` overall.
     """
@@ -261,14 +261,14 @@ def rebuild_index(
 
 
 def main() -> None:
-    """CLI entry point for `python -m python_agent_template.memory`.
+    """CLI entry point for `python -m memory`.
 
     Returns
     -------
     None
     """
     configure_logging()
-    parser = argparse.ArgumentParser(prog="python_agent_template.memory")
+    parser = argparse.ArgumentParser(prog="memory")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     remember_parser = subparsers.add_parser("remember")

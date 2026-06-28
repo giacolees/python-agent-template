@@ -1,8 +1,8 @@
-"""Tests for python_agent_template.memory.records."""
+"""Tests for memory.records."""
 
 from pathlib import Path
 
-from python_agent_template.memory.records import (
+from memory.records import (
     append_memory,
     create_memory_record,
     read_memories,

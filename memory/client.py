@@ -23,7 +23,7 @@ from mem0.configs.embeddings.base import BaseEmbedderConfig  # noqa: E402
 from mem0.embeddings.base import EmbeddingBase  # noqa: E402
 from mem0.embeddings.fastembed import FastEmbedEmbedding  # noqa: E402
 
-from python_agent_template.memory.records import MemoryRecord  # noqa: E402
+from memory.records import MemoryRecord  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +31,7 @@ DEFAULT_AGENT_ID = "python-agent-template"
 DEFAULT_EMBEDDING_MODEL = "BAAI/bge-small-en-v1.5"
 EMBEDDING_DIMS = 384  # output dimension of DEFAULT_EMBEDDING_MODEL
 DEFAULT_TOP_K = 5
-_COLLECTION_NAME = "python_agent_template"
+_COLLECTION_NAME = "memory"
 _CACHE_MARKER_FILENAME = "line_count"
 # mem0's EmbedderConfig/LlmConfig provider validators have no no-op option, and
 # the OpenAI client raises at construction without a key. This placeholder
