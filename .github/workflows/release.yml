@@ -63,7 +63,7 @@ jobs:
 
       - name: Type-check with mypy
         if: steps.check.outputs.changed == 'true'
-        run: uv run mypy src tests
+        run: uv run mypy memory tests
 
       - name: Run tests
         if: steps.check.outputs.changed == 'true'
