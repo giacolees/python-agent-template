@@ -41,3 +41,6 @@ data/*
 .agent-memory/.cache/
 # Solo-session local memory store — gitignored, never shared with teammates
 .agent-memory/local/
+
+# Design docs / superpowers plans — kept locally, not committed
+docs/

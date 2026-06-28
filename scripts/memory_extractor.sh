@@ -47,7 +47,7 @@ commit_sha=$(git rev-parse --short HEAD 2>/dev/null || echo "pending")
 author=$(git config user.name || echo "unknown")
 
 echo "[agent-memory] Remembering: ${extracted}" >&2
-uv run python -m python_agent_template.memory remember "$extracted" --commit "$commit_sha" --author "$author" >&2 || true
+uv run python -m memory remember "$extracted" --commit "$commit_sha" --author "$author" >&2 || true
 git add .agent-memory/memories.jsonl .agent-memory/INDEX.md || true
 
 exit 0
