@@ -43,3 +43,16 @@ def test_core_script_noops_on_empty_stdin() -> None:
         env=env,
     )
     assert result.returncode == 0
+
+
+def test_precompact_adapter_noops_on_invalid_payload() -> None:
+    script = REPO / "scripts" / "hooks" / "precompact_claude.sh"
+    assert _is_executable(script), f"{script} missing or not executable"
+    result = subprocess.run(
+        [str(script)],
+        input="not json",
+        text=True,
+        capture_output=True,
+        env={**os.environ, "SKIP_COMPACTION_MEMORY": "1"},
+    )
+    assert result.returncode == 0
