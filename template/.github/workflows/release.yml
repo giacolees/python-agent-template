@@ -32,8 +32,10 @@ jobs:
       - name: Check whether the version changed
         id: check
         env:
-          CURRENT_VERSION: ${{ steps.current.outputs.version }}
-          LATEST_VERSION: ${{ steps.latest.outputs.version }}
+          CURRENT_VERSION: {% raw %}${{ steps.current.outputs.version }}{% endraw %}
+
+          LATEST_VERSION: {% raw %}${{ steps.latest.outputs.version }}{% endraw %}
+
         run: |
           if [ "$CURRENT_VERSION" = "$LATEST_VERSION" ]; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
@@ -42,38 +44,48 @@ jobs:
           fi
 
       - name: Install uv
-        if: steps.check.outputs.changed == 'true'
+        if: {% raw %}steps.check.outputs.changed == 'true'{% endraw %}
+
         uses: astral-sh/setup-uv@v3
 
       - name: Set up Python
-        if: steps.check.outputs.changed == 'true'
+        if: {% raw %}steps.check.outputs.changed == 'true'{% endraw %}
+
         run: uv python install
 
       - name: Install dependencies
-        if: steps.check.outputs.changed == 'true'
+        if: {% raw %}steps.check.outputs.changed == 'true'{% endraw %}
+
         run: uv sync --all-groups
 
       - name: Lint with ruff
-        if: steps.check.outputs.changed == 'true'
+        if: {% raw %}steps.check.outputs.changed == 'true'{% endraw %}
+
         run: uv run ruff check .
 
       - name: Check formatting with ruff
-        if: steps.check.outputs.changed == 'true'
+        if: {% raw %}steps.check.outputs.changed == 'true'{% endraw %}
+
         run: uv run ruff format --check .
 
       - name: Type-check with mypy
-        if: steps.check.outputs.changed == 'true'
+        if: {% raw %}steps.check.outputs.changed == 'true'{% endraw %}
+
         run: uv run mypy memory tests
 
       - name: Run tests
-        if: steps.check.outputs.changed == 'true'
+        if: {% raw %}steps.check.outputs.changed == 'true'{% endraw %}
+
         run: uv run pytest
 
       - name: Tag and create release
-        if: steps.check.outputs.changed == 'true'
+        if: {% raw %}steps.check.outputs.changed == 'true'{% endraw %}
+
         env:
-          GH_TOKEN: ${{ github.token }}
-          CURRENT_VERSION: ${{ steps.current.outputs.version }}
+          GH_TOKEN: {% raw %}${{ github.token }}{% endraw %}
+
+          CURRENT_VERSION: {% raw %}${{ steps.current.outputs.version }}{% endraw %}
+
         run: |
           TAG="v$CURRENT_VERSION"
           if git rev-parse "$TAG" >/dev/null 2>&1 || git ls-remote --tags origin "$TAG" | grep -q "$TAG"; then

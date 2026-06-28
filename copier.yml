@@ -30,6 +30,7 @@ python_version:
     - "3.13"
 
 _subdirectory: template
+_templates_suffix: ""
 _exclude:
   - copier.yml
   - .git
