@@ -1,5 +1,6 @@
 """Smoke tests for the compaction-memory shell scripts."""
 
+import json
 import os
 import subprocess
 from pathlib import Path
@@ -56,3 +57,17 @@ def test_precompact_adapter_noops_on_invalid_payload() -> None:
         env={**os.environ, "SKIP_COMPACTION_MEMORY": "1"},
     )
     assert result.returncode == 0
+
+
+def test_registration_files_are_valid_json() -> None:
+    mcp_config = json.loads((REPO / ".mcp.json").read_text(encoding="utf-8"))
+    assert "agent-memory" in mcp_config["mcpServers"]
+
+    settings = json.loads((REPO / ".claude" / "settings.json").read_text(encoding="utf-8"))
+    precompact = settings["hooks"]["PreCompact"]
+    commands = [
+        hook["command"]
+        for entry in precompact
+        for hook in entry["hooks"]
+    ]
+    assert "scripts/hooks/precompact_claude.sh" in commands
