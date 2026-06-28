@@ -69,11 +69,13 @@ A pre-commit hook (`scripts/commit_advisor.sh`) calls the Claude Code CLI on
 the staged diff before each commit. It is advisory only — it never blocks the
 commit — and prints a suggested commit message.
 
+{% if include_release_workflow %}
 ## Releasing
 
 Bump `version` in `pyproject.toml` in a PR. Merging to `main` automatically
 tags the commit and publishes a GitHub Release with auto-generated notes.
 
+{% endif %}
 ---
 
 *Scaffolded from [python-agent-template](https://github.com/giacolees/python-agent-template).
