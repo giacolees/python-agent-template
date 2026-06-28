@@ -1,6 +1,6 @@
 [project]
 name = "python-agent-template"
-version = "0.1.3"
+version = "0.1.4"
 description = "Reusable Python project scaffold with AI-agent tooling baked in."
 readme = "README.md"
 requires-python = ">=3.12"

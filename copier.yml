@@ -35,3 +35,8 @@ _exclude:
   - copier.yml
   - .git
   - .copier-answers.yml
+
+include_release_workflow:
+  type: bool
+  help: "Include GitHub Actions workflow for automatic PyPI releases?"
+  default: true
