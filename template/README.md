@@ -22,6 +22,20 @@ uv sync --all-groups
 uv run pre-commit install
 ```
 
+> **Troubleshooting:** if `pre-commit install` fails with `Cowardly
+> refusing to install hooks with core.hooksPath set`, your global git
+> config redirects all hooks to a directory outside this repo (e.g. a
+> tool like tokensave that sets `core.hooksPath` for its own
+> `post-checkout`/`post-commit` hooks). Since git only reads hooks from
+> `core.hooksPath` when it's set — never falling back to `.git/hooks/`
+> — this silently disables every project's pre-commit hooks (including
+> `commit_advisor.sh` and `memory_extractor.sh`) until it's resolved.
+> Fix by adding a `pre-commit` dispatcher script to that global hooks
+> directory that delegates to `pre-commit run --hook-stage pre-commit`
+> for repos with a `.pre-commit-config.yaml`, or by unsetting
+> `core.hooksPath` (`git config --global --unset core.hooksPath`) if
+> you don't need whatever it was set up for.
+
 ## Linting, type-checking & tests
 
 ```bash
