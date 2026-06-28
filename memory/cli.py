@@ -7,6 +7,7 @@ explicit semantic search.
 """
 
 import argparse
+import sys
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
@@ -292,6 +293,14 @@ def main() -> None:
         help="Rebuild the local store's cache instead of the shared one's.",
     )
 
+    remember_insights_parser = subparsers.add_parser("remember-insights")
+    remember_insights_parser.add_argument(
+        "--local",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Write to the gitignored local store (default). Use --no-local for the shared store.",
+    )
+
     args = parser.parse_args()
 
     if args.command == "remember":
@@ -301,3 +310,9 @@ def main() -> None:
             print(f"- ({result['score']:.2f}) {result['memory']}")
     elif args.command == "rebuild-index":
         rebuild_index(memory_dir=_resolve_memory_dir(args.local))
+    elif args.command == "remember-insights":
+        from memory.insights import store_insights
+
+        findings = [line.strip() for line in sys.stdin.read().splitlines() if line.strip()]
+        stored = store_insights(findings, local=args.local)
+        print(f"stored {len(stored)} insight(s)")
