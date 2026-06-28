@@ -27,7 +27,10 @@ script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 python3 - "$transcript_path" <<'PY' | "${script_dir}/../compaction_memory.sh" || true
 import json
+import signal
 import sys
+
+signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
 path = sys.argv[1]
 lines: list[str] = []

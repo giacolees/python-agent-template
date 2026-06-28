@@ -49,6 +49,21 @@ def test_store_insights_skips_blanks_and_caps_at_max(tmp_path: Path) -> None:
     assert stored == ["a", "b", "c"]
 
 
+def test_store_insights_derives_commit_and_author_when_omitted(tmp_path: Path) -> None:
+    memory_dir = tmp_path / ".agent-memory"
+
+    stored = store_insights(
+        ["Use the git-derived defaults"],
+        memory_dir=memory_dir,
+        embedder_factory=_mock_embedder,
+        embedding_dims=_MOCK_DIMS,
+    )
+
+    local_memories = (memory_dir / "local" / "memories.jsonl").read_text(encoding="utf-8")
+    assert stored == ["Use the git-derived defaults"]
+    assert "Use the git-derived defaults" in local_memories
+
+
 def test_store_insights_empty_input_writes_nothing(tmp_path: Path) -> None:
     memory_dir = tmp_path / ".agent-memory"
 
