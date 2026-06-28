@@ -3,9 +3,8 @@
 import io
 import sys
 
-import pytest
-
 import memory.cli as cli
+import pytest
 
 
 def test_remember_insights_reads_stdin_and_calls_store(monkeypatch: pytest.MonkeyPatch) -> None:

@@ -20,7 +20,7 @@ def test_append_memory_then_read_memories_roundtrips(tmp_path: Path) -> None:
     """A record written by append_memory is read back unchanged."""
     memories_path = tmp_path / "memories.jsonl"
     record = create_memory_record(
-        text="Use FAISS for local search", commit="abc1234", author="giacolees"
+        text="Use FAISS for local search", commit="abc1234", author="{{ author }}"
     )
 
     append_memory(memories_path, record)

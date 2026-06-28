@@ -27,7 +27,7 @@ from memory.records import MemoryRecord  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_AGENT_ID = "python-agent-template"
+DEFAULT_AGENT_ID = "{{ project_slug }}"
 DEFAULT_EMBEDDING_MODEL = "BAAI/bge-small-en-v1.5"
 EMBEDDING_DIMS = 384  # output dimension of DEFAULT_EMBEDDING_MODEL
 DEFAULT_TOP_K = 5

@@ -1,4 +1,4 @@
-# Collaboration Practices — python-agent-template
+# Collaboration Practices — {{ project_name }}
 
 Common practices for working together in this repo — for humans and AI
 agents alike. Pairs with [CODING_STANDARDS.md](CODING_STANDARDS.md) (what
@@ -25,8 +25,8 @@ the code must look like) and [NAMING_CONVENTIONS.md](NAMING_CONVENTIONS.md)
   interactive work, or executing a written implementation plan that
   shouldn't touch uncommitted changes already in the main checkout.
 - Create worktrees as sibling directories outside the repo, named after
-  the branch: `../python-agent-template.<branch-name>/` (e.g.
-  `../python-agent-template.feat-multi-target-tracker/`). Don't nest a worktree
+  the branch: `../{{ project_slug }}.<branch-name>/` (e.g.
+  `../{{ project_slug }}.feat-multi-target-tracker/`). Don't nest a worktree
   inside the repo itself — it complicates `.gitignore` and tooling that
   walks the tree.
 - Each worktree gets its own virtual environment (`uv sync`) — dependency

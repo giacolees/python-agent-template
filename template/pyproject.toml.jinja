@@ -1,9 +1,9 @@
 [project]
-name = "python-agent-template"
-version = "0.1.2"
-description = "Reusable Python project scaffold with AI-agent tooling baked in."
+name = "{{ project_name }}"
+version = "0.1.0"
+description = "{{ description }}"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">={{ python_version }}"
 dependencies = [
     "pydantic>=2.7",
     "pyyaml>=6.0",
@@ -32,18 +32,18 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["template/memory"]
+packages = ["memory"]
 
 [tool.ruff]
 line-length = 100
-target-version = "py312"
+target-version = "py{{ python_version | replace('.', '') }}"
 
 [tool.ruff.lint]
 select = ["F", "E", "W", "I", "D", "ANN", "NPY", "N", "PT"]
 ignore = ["D100", "D104"]
 
 [tool.ruff.lint.per-file-ignores]
-"template/tests/**" = ["D100", "D101", "D102", "D103", "D104", "ANN201"]
+"tests/**" = ["D100", "D101", "D102", "D103", "D104", "ANN201"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "numpy"
@@ -59,8 +59,8 @@ quote-style = "double"
 indent-style = "space"
 
 [tool.mypy]
-python_version = "3.12"
-mypy_path = "template"
+python_version = "{{ python_version }}"
+mypy_path = "."
 explicit_package_bases = true
 strict = true
 warn_unused_configs = true
@@ -71,13 +71,7 @@ warn_unused_configs = true
 module = ["mem0.*", "faiss.*", "fastembed.*"]
 ignore_missing_imports = true
 
-[[tool.mypy.overrides]]
-module = ["mcp.*"]
-ignore_missing_imports = true
-
 [tool.pytest.ini_options]
-# No runnable tests live in this repo — tests are inside template/ and
-# contain unresolved Jinja2 expressions. Downstream repos (after `copier copy`)
-# run the actual test suite.
-collect_ignore_glob = ["template/**"]
-
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "--cov=memory --cov-report=term-missing"

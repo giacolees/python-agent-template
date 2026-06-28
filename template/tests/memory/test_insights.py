@@ -4,7 +4,6 @@ from pathlib import Path
 
 from mem0.embeddings.base import EmbeddingBase
 from mem0.embeddings.mock import MockEmbeddings
-
 from memory.insights import store_insights
 
 _MOCK_DIMS = 10
@@ -20,7 +19,7 @@ def test_store_insights_writes_each_finding_to_local_store(tmp_path: Path) -> No
     stored = store_insights(
         ["Prefer FAISS for local search", "Run migrations before deploy"],
         commit="abc1234",
-        author="giacolees",
+        author="{{ author }}",
         memory_dir=memory_dir,
         embedder_factory=_mock_embedder,
         embedding_dims=_MOCK_DIMS,

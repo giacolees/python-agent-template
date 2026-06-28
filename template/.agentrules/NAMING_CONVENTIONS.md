@@ -1,4 +1,4 @@
-# Naming Conventions — python-agent-template
+# Naming Conventions — {{ project_name }}
 
 These conventions are binding for all code, configs, and files generated or
 modified in this repository, in addition to the rules in
