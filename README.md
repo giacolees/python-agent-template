@@ -102,6 +102,23 @@ uv run python -m memory remember "<fact>" --commit pending --author <name> --loc
 results, so nothing written with `--local` is invisible to later `recall`
 calls in the same checkout.
 
+### Compaction insights (local)
+
+At each context compaction, a Claude Code `PreCompact` hook
+(`scripts/hooks/precompact_claude.sh`) extracts up to five durable findings
+from the session and stores them in the **local** memory store via
+`python -m memory remember-insights --local`. Extraction is provider-neutral:
+
+- **Swap the extraction LLM** with `AGENT_MEMORY_EXTRACTOR` (default `claude`;
+  ships `codex` and `gemini` drivers under `scripts/extractors/`). Add a
+  provider by dropping a `scripts/extractors/<name>.sh` that reads a prompt on
+  stdin and prints one finding per line.
+- **Other agent runtimes** can use the same capability via the MCP server
+  (`.mcp.json` registers `agent-memory`, exposing `remember_insights` and
+  `recall`). Wire a non-Claude runtime's compaction/session-end event to
+  `scripts/compaction_memory.sh` (transcript text on stdin).
+- **Opt out** for a session with `SKIP_COMPACTION_MEMORY=1`.
+
 ## AI commit advisor
 
 A pre-commit hook (`scripts/commit_advisor.sh`) calls the Claude Code CLI on

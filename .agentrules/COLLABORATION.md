@@ -134,6 +134,10 @@ the code must look like) and [NAMING_CONVENTIONS.md](NAMING_CONVENTIONS.md)
   merges the results, so nothing written with `--local` is invisible to
   later `recall` calls in the same checkout. The commit hook remains the
   only path that writes to the shared, git-tracked store.
+- Session insights are captured automatically at each compaction into the
+  local (gitignored) store. Swap the extractor with `AGENT_MEMORY_EXTRACTOR`
+  or opt out with `SKIP_COMPACTION_MEMORY=1`. See the README "Compaction
+  insights (local)" subsection.
 
 ## 10. Working with AI agents
 
