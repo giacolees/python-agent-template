@@ -50,7 +50,8 @@ project code under `src/`.
 
 ## Project layout
 
-- `src/` — your application source code (empty by default; reserved for project files).
+- `src/<your_package>/` — your application source code, including `config.py`
+  (typed settings loaded from `configs/`).
 - `memory/` — reusable agent-memory tooling (CLI + mem0-backed store) shared across projects.
 - `tests/` — Pytest suite.
 - `configs/` — YAML configuration (hyperparameters, thresholds, hardware targets).
@@ -73,14 +74,14 @@ uv run pre-commit install
 ```bash
 uv run ruff check .          # lint, including naming conventions (pep8-naming)
 uv run ruff format .         # format
-uv run mypy memory tests     # strict static type checking
+uv run mypy src memory tests # strict static type checking
 uv run pytest                # tests + coverage
 ```
 
 ## Configuration
 
 Application settings (hardware target, example feature flags, paths) live in `configs/*.yaml`
-and are loaded via `memory.config.load_config`, never hardcoded in
+and are loaded via `<your_package>.config.load_config`, never hardcoded in
 source. See `configs/default.yaml` for the schema.
 
 ## Agent rules
@@ -157,9 +158,11 @@ if you set `SKIP_AI_COMMIT_ADVISOR=1` for a given commit.
 ## Releasing
 
 A workflow (`.github/workflows/release.yml`) watches every push to `main`.
-When the `version` field in `pyproject.toml` changes, it re-runs the full
-lint/type-check/test gate, then tags the commit `v<version>` and publishes
-a GitHub Release with auto-generated notes. Pushes that don't change the
+When the `version` field in `pyproject.toml` changes, it tags the commit
+`v<version>` and publishes a GitHub Release with auto-generated notes.
+Validation is left to CI, which renders the template and runs the full
+lint/type-check/test suite on every push to `main`, so the commit is
+already green by the time the release runs. Pushes that don't change the
 version are a no-op for this workflow.
 
 To cut a release: bump `version` in `pyproject.toml` in a normal PR.
