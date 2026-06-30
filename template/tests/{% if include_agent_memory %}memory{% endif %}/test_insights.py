@@ -20,7 +20,7 @@ def test_store_insights_writes_each_finding_to_local_store(tmp_path: Path) -> No
     stored = store_insights(
         ["Prefer FAISS for local search", "Run migrations before deploy"],
         commit="abc1234",
-        author="{{ author }}",
+        author="alice",
         memory_dir=memory_dir,
         embedder_factory=_mock_embedder,
         embedding_dims=_MOCK_DIMS,

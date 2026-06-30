@@ -5,9 +5,19 @@ on:
     branches: [main, master]
   pull_request:
 
+# All Python source and test files live inside template/ and contain
+# unresolved Jinja2 expressions, so they cannot be linted or type-checked
+# directly. Instead we render the template with copier and run the full
+# downstream suite (ruff, mypy, pytest) on the generated project — exactly
+# what a `copier copy` consumer gets.
 jobs:
-  lint-and-test:
+  render-and-test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # Exercise the all-features build and the minimal build so both the
+        # included and excluded code paths are validated.
+        variant: [all-on, all-off]
     steps:
       - uses: actions/checkout@v4
 
@@ -17,16 +27,35 @@ jobs:
       - name: Set up Python
         run: uv python install
 
+      - name: Render template (${{ matrix.variant }})
+        run: |
+          if [ "${{ matrix.variant }}" = "all-off" ]; then
+            extra="--data include_agent_memory=false --data include_commit_advisor=false --data include_agent_rules=false --data include_release_workflow=false"
+          else
+            extra=""
+          fi
+          uvx copier copy --defaults \
+            --data project_name=Generated_Project \
+            --data author=ci \
+            $extra \
+            . ../rendered
+
       - name: Install dependencies
+        working-directory: ../rendered
         run: uv sync --all-groups
 
       - name: Lint with ruff
+        working-directory: ../rendered
         run: uv run ruff check .
 
       - name: Check formatting with ruff
+        working-directory: ../rendered
         run: uv run ruff format --check .
 
-      # mypy and pytest are intentionally omitted: all Python source and test
-      # files live inside template/ and contain unresolved Jinja2 expressions.
-      # Downstream repos run the full suite after `copier copy`.
+      - name: Type-check with mypy
+        working-directory: ../rendered
+        run: uv run mypy src${{ matrix.variant == 'all-on' && ' memory' || '' }} tests
 
+      - name: Run tests
+        working-directory: ../rendered
+        run: uv run pytest

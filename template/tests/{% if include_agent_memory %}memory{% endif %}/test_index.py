@@ -8,7 +8,7 @@ from memory.records import MemoryRecord
 
 def _record(text: str, created_at: str) -> MemoryRecord:
     return MemoryRecord(
-        id="id1", text=text, commit="abc1234", author="{{ author }}", created_at=created_at
+        id="id1", text=text, commit="abc1234", author="alice", created_at=created_at
     )
 
 
@@ -28,7 +28,7 @@ def test_render_index_includes_date_commit_author_and_text() -> None:
 
     assert "2026-06-22" in output
     assert "abc1234" in output
-    assert "{{ author }}" in output
+    assert "alice" in output
     assert "Use FAISS for local search" in output
 
 
