@@ -26,8 +26,8 @@ from memory.client import (
     write_cache_marker,
 )
 from memory.index import write_index
-from memory.logging_config import configure_logging
 from memory.records import append_memory, create_memory_record, read_memories
+from {{ project_slug }}.logging_config import configure_logging
 
 DEFAULT_MEMORY_DIR = Path(".agent-memory")
 _MEMORIES_FILENAME = "memories.jsonl"

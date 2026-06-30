@@ -3,6 +3,7 @@
 from pathlib import Path
 
 from mem0.embeddings.mock import MockEmbeddings
+
 from memory.client import (
     add_to_cache,
     build_memory_client,

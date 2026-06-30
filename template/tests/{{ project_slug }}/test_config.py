@@ -1,12 +1,13 @@
-"""Tests for memory.config."""
+"""Tests for {{ project_slug }}.config."""
 
 from pathlib import Path
 from typing import Any
 
 import pytest
 import yaml
-from memory.config import AppConfig, load_config, read_yaml
 from pydantic import ValidationError
+
+from {{ project_slug }}.config import AppConfig, load_config, read_yaml
 
 VALID_CONFIG: dict[str, Any] = {
     "hardware": {"device": "a100", "num_workers": 2},

@@ -40,3 +40,24 @@ include_release_workflow:
   type: bool
   help: "Include GitHub Actions workflow for automatic PyPI releases?"
   default: true
+
+include_agent_memory:
+  type: bool
+  help: "Include the mem0-backed shared agent-memory system (memory/ package, .agent-memory/, MCP server, extractor hook)?"
+  default: true
+
+include_compaction_memory:
+  type: bool
+  help: "Include PreCompact session-memory extraction hooks? (requires agent memory)"
+  default: true
+  when: "{{ include_agent_memory }}"
+
+include_commit_advisor:
+  type: bool
+  help: "Include the AI commit-advisor pre-commit hook (suggests commit messages via the Claude CLI)?"
+  default: true
+
+include_agent_rules:
+  type: bool
+  help: "Include the .agentrules/ binding coding standards?"
+  default: true

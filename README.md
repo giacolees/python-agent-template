@@ -21,6 +21,16 @@ uv run pre-commit install
 Copier will prompt for your project name, slug, description, author, and Python
 version, then generate a fully-personalised project from the `template/` directory.
 
+It also asks which optional components to include — each can be turned off:
+
+- **Agent memory system** — the mem0-backed shared memory store (`memory/`
+  package, `.agent-memory/`, MCP server, extraction hook).
+- **Compaction memory hooks** — PreCompact session-insight extraction (requires
+  the agent memory system).
+- **AI commit advisor** — pre-commit hook that suggests commit messages.
+- **Agent rules** — the binding `.agentrules/` coding standards.
+- **Release workflow** — GitHub Actions workflow for automatic PyPI releases.
+
 **Keep a downstream repo up to date** when this template ships new changes:
 
 ```bash

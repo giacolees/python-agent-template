@@ -108,7 +108,7 @@ the code must look like) and [NAMING_CONVENTIONS.md](NAMING_CONVENTIONS.md)
   meaningfully unit-tested (e.g. it's pure I/O glue), say so in the PR
   description rather than leaving it silently uncovered.
 
-## 9. Shared agent memory
+{% if include_agent_memory %}## 9. Shared agent memory
 
 - `.agent-memory/memories.jsonl` is a git-tracked, append-only log of
   durable project knowledge (decisions, conventions, gotchas) contributed
@@ -136,12 +136,12 @@ the code must look like) and [NAMING_CONVENTIONS.md](NAMING_CONVENTIONS.md)
   merges the results, so nothing written with `--local` is invisible to
   later `recall` calls in the same checkout. The commit hook remains the
   only path that writes to the shared, git-tracked store.
-- Session insights are captured automatically at each compaction into the
+{% if include_compaction_memory %}- Session insights are captured automatically at each compaction into the
   local (gitignored) store. Swap the extractor with `AGENT_MEMORY_EXTRACTOR`
   or opt out with `SKIP_COMPACTION_MEMORY=1`. See the README "Compaction
   insights (local)" subsection.
-
-## 10. Working with AI agents
+{% endif %}
+{% endif %}## {% if include_agent_memory %}10{% else %}9{% endif %}. Working with AI agents
 
 - Agents (Claude Code or otherwise) follow every rule in this directory
   exactly as a human contributor would — there is no relaxed standard for

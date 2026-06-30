@@ -4,6 +4,7 @@ from pathlib import Path
 
 from mem0.embeddings.base import EmbeddingBase
 from mem0.embeddings.mock import MockEmbeddings
+
 from memory.insights import store_insights
 
 _MOCK_DIMS = 10

@@ -1,7 +1,8 @@
 """Tests for memory.mcp_server tool delegation."""
 
-import memory.mcp_server as mcp_server
 import pytest
+
+import memory.mcp_server as mcp_server
 
 
 def test_remember_insights_tool_delegates_to_store(monkeypatch: pytest.MonkeyPatch) -> None:
