@@ -41,27 +41,10 @@ jobs:
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Install uv
-        if: steps.check.outputs.changed == 'true'
-        uses: astral-sh/setup-uv@v3
-
-      - name: Set up Python
-        if: steps.check.outputs.changed == 'true'
-        run: uv python install
-
-      - name: Install dependencies
-        if: steps.check.outputs.changed == 'true'
-        run: uv sync --all-groups
-
-      - name: Lint with ruff
-        if: steps.check.outputs.changed == 'true'
-        run: uv run ruff check .
-
-      - name: Check formatting with ruff
-        if: steps.check.outputs.changed == 'true'
-        run: uv run ruff format --check .
-
-      # mypy and pytest are intentionally omitted — see ci.yml for rationale.
+      # Validation is intentionally omitted here: the template files contain
+      # unresolved Jinja2 and cannot be linted/type-checked directly. CI
+      # already renders the template and runs the full suite on every push to
+      # main (see ci.yml), so by the time this job runs the commit is green.
 
       - name: Tag and create release
         if: steps.check.outputs.changed == 'true'
