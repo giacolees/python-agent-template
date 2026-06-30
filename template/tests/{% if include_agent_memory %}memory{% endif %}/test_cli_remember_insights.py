@@ -3,8 +3,9 @@
 import io
 import sys
 
-import memory.cli as cli
 import pytest
+
+import memory.cli as cli
 
 
 def test_remember_insights_reads_stdin_and_calls_store(monkeypatch: pytest.MonkeyPatch) -> None:

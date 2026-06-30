@@ -21,19 +21,20 @@ repos:
         args: ['--baseline', '.secrets.baseline']
         exclude: uv.lock
 
-  - repo: local
+{% if include_commit_advisor or include_agent_memory %}  - repo: local
     hooks:
-      - id: commit-advisor
+{% if include_commit_advisor %}      - id: commit-advisor
         name: AI commit advisor (worth-it check + message suggestion)
         entry: scripts/commit_advisor.sh
         language: system
         pass_filenames: false
         always_run: true
         verbose: true
-      - id: agent-memory
+{% endif %}{% if include_agent_memory %}      - id: agent-memory
         name: Shared agent memory extractor (advisory)
         entry: scripts/memory_extractor.sh
         language: system
         pass_filenames: false
         always_run: true
         verbose: true
+{% endif %}{% endif %}

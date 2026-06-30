@@ -5,15 +5,15 @@
 ## Project layout
 
 - `src/{{ project_slug }}/` — your application source code.
-- `memory/` — reusable agent-memory tooling (CLI + mem0-backed store) shared across projects.
-- `tests/` — Pytest suite.
+{% if include_agent_memory %}- `memory/` — reusable agent-memory tooling (CLI + mem0-backed store) shared across projects.
+{% endif %}- `tests/` — Pytest suite.
 - `configs/` — YAML configuration (hyperparameters, thresholds, hardware targets).
 - `deployment/` — Dockerfiles and Kubernetes manifests.
-- `.agentrules/` — coding standards binding for all agent-generated code (see
+{% if include_agent_rules %}- `.agentrules/` — coding standards binding for all agent-generated code (see
   [Agent rules](#agent-rules) below).
-- `.agent-memory/` — shared, git-tracked agent memory (see
+{% endif %}{% if include_agent_memory %}- `.agent-memory/` — shared, git-tracked agent memory (see
   [Shared agent memory](#shared-agent-memory) below).
-- `data/` — local data directory (gitignored; do not commit raw data).
+{% endif %}- `data/` — local data directory (gitignored; do not commit raw data).
 
 ## Setup
 
@@ -41,17 +41,17 @@ uv run pre-commit install
 ```bash
 uv run ruff check .          # lint, including naming conventions (pep8-naming)
 uv run ruff format .         # format
-uv run mypy memory tests     # strict static type checking
+uv run mypy src{% if include_agent_memory %} memory{% endif %} tests     # strict static type checking
 uv run pytest                # tests + coverage
 ```
 
 ## Configuration
 
 Application settings live in `configs/*.yaml` and are loaded via
-`memory.config.load_config`, never hardcoded in source. See
+`{{ project_slug }}.config.load_config`, never hardcoded in source. See
 `configs/default.yaml` for the schema.
 
-## Agent rules
+{% if include_agent_rules %}## Agent rules
 
 Rules in `.agentrules/` are binding for all code, configs, and commits in
 this repo — for humans and AI agents alike:
@@ -64,7 +64,7 @@ this repo — for humans and AI agents alike:
   commits, pull requests, code review, configuration & secrets,
   dependencies, testing, and working with AI agents.
 
-## Shared agent memory
+{% endif %}{% if include_agent_memory %}## Shared agent memory
 
 A pre-commit hook (`scripts/memory_extractor.sh`) extracts durable
 project knowledge from each commit's diff via the `claude` CLI and
@@ -77,13 +77,13 @@ directly with:
 uv run python -m memory recall "<query>"
 ```
 
-## AI commit advisor
+{% endif %}{% if include_commit_advisor %}## AI commit advisor
 
 A pre-commit hook (`scripts/commit_advisor.sh`) calls the Claude Code CLI on
 the staged diff before each commit. It is advisory only — it never blocks the
 commit — and prints a suggested commit message.
 
-{% if include_release_workflow %}
+{% endif %}{% if include_release_workflow %}
 ## Releasing
 
 Bump `version` in `pyproject.toml` in a PR. Merging to `main` automatically

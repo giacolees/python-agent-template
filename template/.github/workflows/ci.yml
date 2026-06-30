@@ -27,7 +27,7 @@ jobs:
         run: uv run ruff format --check .
 
       - name: Type-check with mypy
-        run: uv run mypy memory tests
+        run: uv run mypy src{% if include_agent_memory %} memory{% endif %} tests
 
       - name: Run tests
         run: uv run pytest
